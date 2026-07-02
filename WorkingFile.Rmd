@@ -1,0 +1,109 @@
+---
+title: "WorkingFile"
+output: html_document
+author: 'Alex Mears'
+---
+
+```{r}
+library(tidyverse)
+library(scales)
+df <- read.csv("career_explorer_occupational_level_data_1192_rows.csv")
+```
+
+# Introduction.
+
+For this project, I will be examining the [**Career Explorer Occupational Level Data**](https://data.iowa.gov/catalog/dataset/1192)data set to get some insights into the job market in Iowa. This data set is created and managed by the Iowa Workforce Development agency, and it is updated every year. So the data is comprehensive, clean, and up to date.
+
+This data set compiles information about different jobs across Iowa. It is incredibly large, at 40048 rows and 91 columns. The data set includes information about current job markets, predicted future changes in those markets, education requirements, desired skills, and much more. For a full breakdown of each column, check out the link above, and click on the 'Columns' tab. Since there are so many, I will not go into detail on each one, but I will describe them as I use them in my research.
+
+# Initial Overview
+
+Firstly, I want to take a look at some of the more 'basic' explorations.
+
+```{r}
+dfia <- df |> filter(geography == 'State of Iowa')
+```
+
+### How many different types of jobs are there?
+
+```{r}
+cat('There are', 
+    df |> select(occupational_title) |> unique()|> nrow(),
+    'unique occupational titles')
+```
+
+### How many years does this data set cover?
+
+The data set has a few different columns related to years. `estimated_employment_year` gives the year that `estimated_employment` was estimated. `projected_employment_year` gives the year for the `projected_employment`. `wage_year` identifies the year when the wage data was collected.
+
+```{r}
+df |> select(wage_year) |> unique()
+```
+
+```{r}
+df |> select(estimated_employment_year) |> unique()
+```
+
+```{r}
+df |> select(projected_employment_year) |> unique()
+```
+
+For all three columns, they each have one unique value. For all jobs, the `estimated_employment` was collected in 2022, `projected_employment` is for 2032, and wages were collected in 2024.
+
+### What does the average salary distribution look like?
+
+For these next few, I will just look at rows with `geography == 'State of Iowa'`. Since this is just a basic exploration of the data, I don't want to get too in the weeds quite yet. In my more advanced exploration I will be exploring the data as it relates to counties in Iowa.
+
+```{r, error=FALSE}
+dfia |> select(average_annual_salary) |> ggplot(aes(x = average_annual_salary)) + geom_histogram(bins = 100) + scale_x_continuous(labels = label_comma(), n.breaks = 10)
+```
+
+```{r}
+dfia |> select(average_annual_salary) |> summary()
+```
+
+From this histogram and the summary we see that most jobs fall within the 25,000 - 80,000 range, with a few large outliers.
+
+### What jobs have the most employment? Which have the least?
+
+```{r}
+search_max_min <- dfia |> select(occupational_title, estimated_employment) 
+search_max_min[which.max(search_max_min$estimated_employment), ]
+
+search_max_min[which.min(search_max_min$estimated_employment), ]
+```
+
+Understandably, the job with the highest employment is `Farmers, Ranchers, & Other Agricultural Manager` with 86,365 jobs. The job with the lowest employment is `Motion Picture Projectionist`, with only 85 jobs.
+
+### What are the most common top ranked skills?
+
+```{r}
+dfia |> select(skill_def, skill_type) |> 
+  ggplot(aes(x=fct_rev(fct_infreq(skill_def)), fill = skill_type)) + 
+  geom_bar() + coord_flip() +
+  geom_text(
+    stat = 'count',
+    aes(label = after_stat(count)),
+    vjust = 0.4,
+    hjust = 1.1,
+    size = 3
+  )
+```
+
+The most frequent top skill is `Active Listening` by a large margin. The next highest skill is Critical Thinking, with 134 less jobs listing it as the top skill. Most interestingly though, is that 70 jobs didn't have a skill listed.
+
+```{r}
+dfia |> filter(top_skill_code == 'N.A.') |> select(occupational_title)
+```
+
+When looking at the jobs without listed skills, we see some pretty popular roles listed. For example, `Social Worker` is a job without a listed skill, but I would think that something like `Active Listening` would absolutely be one of the top skills for that role.
+
+Ironically enough, one of the jobs without skill listed is `Data Scientist`.
+
+### What are typical education requirements?
+
+```{r}
+dfia |> select(typical_education_requirement) |> ggplot(aes(x=typical_education_requirement)) + geom_bar() + coord_flip()
+```
+
+We see that `High School Diploma or Equivalent` is good enough to get you the majority of jobs in the state. Following that is `Bachelor's Degree`, and then `No Education`. The rest of the educational levels have much fewer jobs, with the least being `Some College, No Degree`.
