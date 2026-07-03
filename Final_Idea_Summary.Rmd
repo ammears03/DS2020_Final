@@ -4,27 +4,30 @@ output: html_document
 author: 'Alex Mears'
 ---
 
-```{r}
+```{r, include = FALSE}
 library(tidyverse)
 library(scales)
-df <- read.csv("career_explorer_occupational_level_data_1192_rows.csv")
+
+# Use for local editing
+# df <- read.csv("career_explorer_occupational_level_data_1192_rows.csv")
+
+# Use for uploading
+df <- read.csv("https://raw.githubusercontent.com/ammears03/DS2020_Final/refs/heads/main/career_explorer_occupational_level_data_1192_rows.csv")
 ```
 
-# Introduction
+# Misinformation: The Most Dangerous Occupational Hazard
+
+## Introduction
 
 For this project, I will be examining the [**Career Explorer Occupational Level Data**](https://data.iowa.gov/catalog/dataset/1192) data set to get some insights into the job market in Iowa. This data set is created and managed by the Iowa Workforce Development agency, and it is updated every year. So the data is comprehensive, clean, and up to date.
 
 This data set compiles information about different jobs across Iowa. It is incredibly large, at 40048 rows and 91 columns. The data set includes information about current job markets, predicted future changes in those markets, education requirements, desired skills, and much more. For a full breakdown of each column, check out the link above, and click on the 'Columns' tab. Since there are so many, I will not go into detail on each one, but I will describe them as I use them in my research.
 
-# Initial Overview
+## Initial Overview
 
 Firstly, I want to take a look at some of the more 'basic' explorations.
 
-```{r}
-dfia <- df |> filter(geography == 'State of Iowa')
-```
-
-### How many different types of jobs are there?
+### How many different jobs are there?
 
 ```{r}
 cat('There are', 
@@ -54,7 +57,11 @@ For all three columns, they each have one unique value. For all jobs, the `estim
 
 For these next few, I will just look at rows with `geography == 'State of Iowa'`. Since this is just a basic exploration of the data, I don't want to get too in the weeds quite yet. In my more advanced exploration I will be exploring the data as it relates to counties in Iowa.
 
-```{r, error=FALSE}
+```{r}
+dfia <- df |> filter(geography == 'State of Iowa')
+```
+
+```{r, warning=FALSE}
 dfia |> select(average_annual_salary) |> ggplot(aes(x = average_annual_salary)) + geom_histogram(bins = 100) + scale_x_continuous(labels = label_comma(), n.breaks = 10)
 ```
 
@@ -90,7 +97,7 @@ dfia |> select(skill_def, skill_type) |>
   )
 ```
 
-The most frequent top skill is `Active Listening` by a large margin. The next highest skill is Critical Thinking, with 134 less jobs listing it as the top skill. Most interestingly though, is that 70 jobs didn't have a skill listed.
+The most frequent top skill is `Active Listening` by a large margin. The next highest skill is Critical Thinking, with 134 less jobs listing it as the top skill. Most interestingly though, is that 70 jobs didn't have a skill listed. Those jobs being:
 
 ```{r}
 dfia |> filter(top_skill_code == 'N.A.') |> select(occupational_title)
@@ -106,9 +113,9 @@ Ironically enough, one of the jobs without skill listed is `Data Scientist`.
 dfia |> select(typical_education_requirement) |> ggplot(aes(x=typical_education_requirement)) + geom_bar() + coord_flip()
 ```
 
-We see that `High School Diploma or Equivalent` is good enough to get you the majority of jobs in the state. Following that is `Bachelor's Degree`, and then `No Education`. The rest of the educational levels have much fewer jobs, with the least being `Some College, No Degree`.
+We see that `High School Diploma or Equivalent` is good enough to get you the majority of jobs in the state. Following that is `Bachelor's Degree`, and then `No Formal Educational Credential`. The rest of the educational levels have much fewer jobs, with the least being `Some College, No Degree`.
 
-# Advanced Exploration
+## Advanced Exploration
 
 The next phase of this project is to explore the data more in depth. This will mainly come in the form of looking at the future projections, and focusing on geographical locations. Some further research questions are:
 
@@ -116,4 +123,5 @@ The next phase of this project is to explore the data more in depth. This will m
 2.  What is the future job market projected to be in 'relevant' counties?
 3.  What are the projected top skills, education, and training for the future?
 4.  How is the market as a whole projected to change?
-5.  
+5.  In depth analysis of my future jobs/markets.
+    - Ultimately this project is about understanding the Iowa job market. So it makes sense to me that I end with an exploration into how I fit into the system.
