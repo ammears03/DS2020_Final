@@ -1,5 +1,5 @@
 ---
-title: "WorkingFile"
+title: "Final Project: Idea and Summaries"
 output: html_document
 author: 'Alex Mears'
 ---
@@ -10,9 +10,9 @@ library(scales)
 df <- read.csv("career_explorer_occupational_level_data_1192_rows.csv")
 ```
 
-# Introduction.
+# Introduction
 
-For this project, I will be examining the [**Career Explorer Occupational Level Data**](https://data.iowa.gov/catalog/dataset/1192)data set to get some insights into the job market in Iowa. This data set is created and managed by the Iowa Workforce Development agency, and it is updated every year. So the data is comprehensive, clean, and up to date.
+For this project, I will be examining the [**Career Explorer Occupational Level Data**](https://data.iowa.gov/catalog/dataset/1192) data set to get some insights into the job market in Iowa. This data set is created and managed by the Iowa Workforce Development agency, and it is updated every year. So the data is comprehensive, clean, and up to date.
 
 This data set compiles information about different jobs across Iowa. It is incredibly large, at 40048 rows and 91 columns. The data set includes information about current job markets, predicted future changes in those markets, education requirements, desired skills, and much more. For a full breakdown of each column, check out the link above, and click on the 'Columns' tab. Since there are so many, I will not go into detail on each one, but I will describe them as I use them in my research.
 
@@ -107,3 +107,13 @@ dfia |> select(typical_education_requirement) |> ggplot(aes(x=typical_education_
 ```
 
 We see that `High School Diploma or Equivalent` is good enough to get you the majority of jobs in the state. Following that is `Bachelor's Degree`, and then `No Education`. The rest of the educational levels have much fewer jobs, with the least being `Some College, No Degree`.
+
+# Advanced Exploration
+
+The next phase of this project is to explore the data more in depth. This will mainly come in the form of looking at the future projections, and focusing on geographical locations. Some further research questions are:
+
+1.  What is the current job market like in 'relevant' (large) counties?
+2.  What is the future job market projected to be in 'relevant' counties?
+3.  What are the projected top skills, education, and training for the future?
+4.  How is the market as a whole projected to change?
+5.  
